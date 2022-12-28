@@ -154,9 +154,7 @@ The script above will take a few minutes to create VMSS and related resources. O
 1. Deploy the application to one of the VMSS instances.  Login to one of the VMSS instances, and deploy the application manually. 
       ```bash
       # Find the port for connecting via SSH 
-      az vmss list-instance-connection-info \
-         --resource-group acdnd-c4-project \
-         --name udacity-vmss 
+      az vmss list-instance-connection-info --resource-group acdnd-c4-project --name udacity-vmss 
       # The following command will connect you to your VM. 
       # Replace `[public-ip]` with the public-ip address of your VMSS.
       ssh -p [port number] udacityadmin@[public-ip]
