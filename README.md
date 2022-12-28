@@ -154,9 +154,7 @@ The script above will take a few minutes to create VMSS and related resources. O
 1. Deploy the application to one of the VMSS instances.  Login to one of the VMSS instances, and deploy the application manually. 
       ```bash
       # Find the port for connecting via SSH 
-      az vmss list-instance-connection-info \
-         --resource-group acdnd-c4-project \
-         --name udacity-vmss 
+      az vmss list-instance-connection-info --resource-group acdnd-c4-project --name udacity-vmss 
       # The following command will connect you to your VM. 
       # Replace `[public-ip]` with the public-ip address of your VMSS.
       ssh -p [port number] udacityadmin@[public-ip]
@@ -280,35 +278,35 @@ The script above will take a few minutes to create VMSS and related resources. O
       ./create-cluster.sh
       ```
 
-6. Next, create a Container Registry in Azure to store the image, and AKS can later pull them during deployment to the AKS cluster. Feel free to change the ACR name in place of `myacr202106` below.
+6. Next, create a Container Registry in Azure to store the image, and AKS can later pull them during deployment to the AKS cluster. Feel free to change the ACR name in place of `muhanacr` below.
       ```bash
       # Assuming the acdnd-c4-project resource group is still avaiable with you
       # Create a resource group
       az group create --name acdnd-c4-project --location westus2
       # ACR name should not have upper case letter
-      az acr create --resource-group acdnd-c4-project --name myacr202106 --sku Basic
+      az acr create --resource-group acdnd-c4-project --name muhanacr --sku Basic
       # Log in to the ACR
-      az acr login --name myacr202106
+      az acr login --name muhanacr
       # Get the ACR login server name
       # To use the azure-vote-front container image with ACR, the image needs to be tagged with the login server address of your registry. 
       # Find the login server address of your registry
-      az acr show --name myacr202106 --query loginServer --output table
+      az acr show --name muhanacr --query loginServer --output table
       # Associate a tag to the local image. You can use a different tag (say v2, v3, v4, ....) everytime you edit the underlying image. 
-      docker tag azure-vote-front:v1 myacr202106.azurecr.io/azure-vote-front:v1
-      # Now you will see myacr202106.azurecr.io/azure-vote-front:v1 if you run docker images
+      docker tag azure-vote-front:v1 muhanacr.azurecr.io/azure-vote-front:v1
+      # Now you will see muhanacr.azurecr.io/azure-vote-front:v1 if you run docker images
       # Push the local registry to remote ACR
-      docker push myacr202106.azurecr.io/azure-vote-front:v1
+      docker push muhanacr.azurecr.io/azure-vote-front:v1
       # Verify if you image is up in the cloud.
-      az acr repository list --name myacr202106 --output table
+      az acr repository list --name muhanacr --output table
       # Associate the AKS cluster with the ACR repository
-      az aks update -n udacity-cluster -g acdnd-c4-project --attach-acr myacr202106
+      az aks update -n udacity-cluster -g acdnd-c4-project --attach-acr muhanacr
       ```
 
 7. Now, deploy the images to the AKS cluster:
       ```bash
       # Get the ACR login server name
-      az acr show --name myacr202106 --query loginServer --output table
-      # Make sure that the manifest file *azure-vote-all-in-one-redis.yaml*, has `myacr202106.azurecr.io/azure-vote-front:v1` as the image path.  
+      az acr show --name muhanacr --query loginServer --output table
+      # Make sure that the manifest file *azure-vote-all-in-one-redis.yaml*, has `muhanacr.azurecr.io/azure-vote-front:v1` as the image path.  
       # Deploy the application. Run the command below from the parent directory where the *azure-vote-all-in-one-redis.yaml* file is present. 
       kubectl apply -f azure-vote-all-in-one-redis.yaml
       # Test the application at the External IP
@@ -319,7 +317,7 @@ The script above will take a few minutes to create VMSS and related resources. O
       # Check the status of each node
       kubectl get pods
       # In case you wish to change the image in ACR, you can redeploy using:
-      kubectl set image deployment azure-vote-front azure-vote-front=myacr202106.azurecr.io/azure-vote-front:v1      
+      kubectl set image deployment azure-vote-front azure-vote-front=muhanacr.azurecr.io/azure-vote-front:v1      
       # Push your changes so far to the Github repo, preferably in the Deploy_to_AKS branch
       ```
 
